@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import six
 import warnings
 
 from gevent.pywsgi import WSGIHandler
@@ -229,7 +230,11 @@ class WebSocketHandler(WSGIHandler):
         return self.server.logger
 
     def log_request(self):
-        if '101' not in self.status:
+        if six.PY3:
+            status = self.status
+        else:
+            status = self.status.decode('utf-8')
+        if '101' not in status:
             self.logger.info(self.format_request())
 
     @property
